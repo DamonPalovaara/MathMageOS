@@ -15,6 +15,12 @@
 	libjack2
 	libpulseaudio
   ];
+  programs.git.config = { 
+    enable = true;
+    user.name = "DamonPalovaara";
+    user.email = "dpalovaa@nmu.edu";
+  };
+
   hardware.opengl.enable = true;
 
   # Use the systemd-boot EFI boot loader.
