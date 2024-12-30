@@ -2,13 +2,20 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, pkgs-unstable, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [ ./hardware-configuration.nix ];
+  
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+	libGL
+	xorg.libX11
+	alsa-lib
+	libjack2
+	libpulseaudio
+  ];
+  hardware.opengl.enable = true;
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -28,7 +35,7 @@
     useXkbConfig = true; # use xkb.options in tty.
   };
 
-  # EnIable the X11 windowing system.
+  # Services
   services = {
     pipewire = {
       enable = true;
@@ -38,6 +45,13 @@
       };
       pulse.enable = true;
     };
+    xserver = {
+      enable = true;
+      windowManager.i3.enable = true;
+    };
+    displayManager = {
+      defaultSession = "none+i3";
+    };
   };
 
   nixpkgs.config = {
@@ -45,8 +59,8 @@
       pulseaudio = true;
   };
 
-  # programs.thunar.enable = true;
-  # programs.firefox.enable = true;
+  programs.thunar.enable = true;
+  programs.firefox.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.damon = {
@@ -54,26 +68,21 @@
     extraGroups = [ "networkmanager" "wheel" ]; # Enable ‘sudo’ for the user.
   };
 
-  # System Packages
-  environment.systemPackages = with pkgs; [
-    # alacritty
-    # dmenu
-    git
-    # gnome.gnome-keyring
-    # nerdfonts
-    # networkmanagerapplet
-    # feh
-    # i3status-rust
-    # picom
-    # polkit_gnome
-    # pulseaudioFull
-    # dmenu
-    vim
-    # i3
-    # xorg.xinit
-    fish
-    fastfetch
+  # PKGS
+  environment.systemPackages = 
+	(map (x: pkgs."${x}") 
+		(builtins.filter (x: x != "") 
+			(map (x: toString x) 
+				(builtins.split "\n" (builtins.readFile ./packages.txt))))) 
+	++ [pkgs-unstable.darktable];
+#	++ (with pkgs; [libGL wget gcc gdb gnumake cmake unzip zip curl jq python3 zstd libpulseaudio pkgconf]);
+  # FONTS
+  fonts.packages = with pkgs; [ 
+    fira-code
+    font-awesome
   ];
+
+  environment.variables.EDITOR = "alacritty";
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

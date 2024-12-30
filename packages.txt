@@ -13,3 +13,5 @@ discord
 htop
 btop
 vim
+unzip
+wget

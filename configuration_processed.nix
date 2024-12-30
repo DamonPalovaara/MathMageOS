@@ -64,7 +64,6 @@
   # services.gnome3.gnome-keyring.enable = true;
   # services.gnome3.seahorse.enable = true;
   # security.pam.services.lightdm.enable = true;
-i
   # PKGS
   environment.systemPackages = with pkgs; [ 
 alacritty
@@ -82,6 +81,7 @@ discord
 htop
 btop
 vim
+iwouldbesurprisedifthisworked
   ];
     # gnome.gnome-keyring
     # networkmanagerapplet
