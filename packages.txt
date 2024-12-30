@@ -1,0 +1,15 @@
+alacritty
+git
+neovim
+fish
+fastfetch
+picom
+feh
+i3status-rust
+killall
+hello
+obs-studio
+discord
+htop
+btop
+vim
