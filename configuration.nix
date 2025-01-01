@@ -9,11 +9,7 @@
   
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
-	libGL
-	xorg.libX11
-	alsa-lib
-	libjack2
-	libpulseaudio
+	pipewire
   ];
   programs.git.config = { 
     enable = true;
@@ -67,10 +63,12 @@
 
   programs.thunar.enable = true;
   programs.firefox.enable = true;
+  programs.fish.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.damon = {
     isNormalUser = true;
+    shell = pkgs.fish;
     extraGroups = [ "networkmanager" "wheel" ]; # Enable ‘sudo’ for the user.
   };
 
@@ -79,11 +77,11 @@
 	(map (x: pkgs."${x}") 
 		(builtins.filter (x: x != "") 
 			(map (x: toString x) 
-				(builtins.split "\n" (builtins.readFile ./packages.txt))))) 
-	++ [pkgs-unstable.darktable];
+				(builtins.split "\n" (builtins.readFile ./packages.txt)))));
+#	++ [pkgs-unstable.darktable];
 #	++ (with pkgs; [libGL wget gcc gdb gnumake cmake unzip zip curl jq python3 zstd libpulseaudio pkgconf]);
   # FONTS
-  fonts.packages = with pkgs; [ 
+  fonts.packages = with pkgs; [ q
     fira-code
     font-awesome
   ];
