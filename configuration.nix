@@ -55,11 +55,6 @@
 
   # PROGRAMS
   programs = {
-    git.config = { 
-      enable = true;
-      user.name = "DamonPalovaara";
-      user.email = "dpalovaa@nmu.edu";
-    };
     thunar.enable = true;
     firefox.enable = true;
     fish.enable = true;

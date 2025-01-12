@@ -14,9 +14,19 @@
   home.file = {
     # ".screenrc".source = dotfiles/screenrc;
   };
+  
+  programs.git = { 
+    enable = true;
+    userName = "DamonPalovaara";
+    userEmail = "dpalovaa@nmu.edu";
+    extraConfig = {
+      push = { autoSetupRemote = true; };
+    };
+  };
+
 
   home.sessionVariables = {
-    EDITOR = "nvim";
+    EDITOR = "hx";
   };
 
   # Let Home Manager install and manage itself.

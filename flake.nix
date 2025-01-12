@@ -10,7 +10,7 @@
 		};
 	};
 
-	outputs = { self, nixpkgs, nixpkgs-unstable, ... }:
+	outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }:
 
 	let
 		system = "x86_64-linux";
@@ -29,5 +29,11 @@
 			};
 		};
 
+		homeConfigurations = {
+			damon = home-manager.lib.homeManagerConfiguration {
+				inherit pkgs;
+				modules = [ ./home.nix ];
+			};
+		};
 	};
 }
