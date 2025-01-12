@@ -1,9 +1,13 @@
 {
-	description = "My first flake!";
+	description = "MathMage's dotfiles";
 	
 	inputs = {
 		nixpkgs.url = "nixpkgs/nixos-24.11";
 		nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+		home-manager = {
+			url = "github:nix-community/home-manager/release-24.11";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
 	};
 
 	outputs = { self, nixpkgs, nixpkgs-unstable, ... }:
