@@ -8,9 +8,10 @@
 			url = "github:nix-community/home-manager/release-24.11";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
+		musnix = { url = "github:musnix/musnix"; };
 	};
 
-	outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }:
+	outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, musnix, ... }:
 
 	let
 		system = "x86_64-linux";
@@ -22,9 +23,13 @@
 		nixosConfigurations = {
 			nixos = lib.nixosSystem {
 				inherit system;
-				modules = [ ./configuration.nix ];
+				modules = [ 
+					./configuration.nix
+					musnix.nixosModules.musnix
+				];
 				specialArgs = {
 					inherit pkgs-unstable;
+					inherit musnix;
 				};
 			};
 		};

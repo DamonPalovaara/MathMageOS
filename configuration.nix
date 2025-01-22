@@ -2,11 +2,17 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, pkgs-unstable, ... }:
+{ config, lib, pkgs, pkgs-unstable, musnix, ... }:
 
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [ 
+    ./hardware-configuration.nix
+  ];
 
+  musnix.enable = true;
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  
   # BOOT
   boot = {
     extraModulePackages = with config.boot.kernelPackages; [
@@ -28,6 +34,7 @@
 
   # SERVICES
   services = {
+    flatpak.enable = true;
     pipewire = {
       enable = true;
       pulse.enable = true;
@@ -116,7 +123,7 @@
   users.users.damon = {
     isNormalUser = true;
     shell = pkgs.fish;
-    extraGroups = [ "networkmanager" "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "networkmanager" "wheel" "audio" ]; 
   };
 
   environment.variables.EDITOR = "alacritty";
