@@ -1,7 +1,6 @@
 icons_format = "{icon}"
  
 [theme]
-#theme = "solarized-dark"
 theme = "/home/damon/.config/i3status-rust/purple-sunset.toml"
  
 [icons]

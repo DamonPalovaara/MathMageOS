@@ -9,10 +9,28 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
   ];
-
+  
   # dotfiles
   home.file = {
     # ".screenrc".source = dotfiles/screenrc;
+  };
+
+  gtk = {
+    enable = true;  
+    cursorTheme = {
+      package = pkgs.bibata-cursors-translucent;
+      size = 32;
+      name = "Bibata_Ghost";
+    };
+  };
+
+  home.pointerCursor = {
+    gtk.enable = true;
+    x11.enable = true;
+    x11.defaultCursor = "Bibata_Ghost";
+    package = pkgs.bibata-cursors-translucent;
+    name = "Bibata_Ghost";
+    size = 96;
   };
   
   programs.git = { 

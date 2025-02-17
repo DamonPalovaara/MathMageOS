@@ -5,13 +5,59 @@
 { config, lib, pkgs, pkgs-unstable, musnix, ... }:
 
 {
+  nix.extraOptions = ''
+    trusted-users = root damon
+  '';
+  
   imports = [ 
     ./hardware-configuration.nix
   ];
-
-  musnix.enable = true;
+  # MUSNIX
+  musnix = {
+    enable = true;
+    kernel.realtime = true;
+    rtcqs.enable = true;
+  };
+  
   xdg.portal.enable = true;
-  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  xdg.portal.extraPortals = with pkgs; [ 
+    xdg-desktop-portal-gtk 
+    xdg-desktop-portal-wlr
+  ];
+
+  # OLLAMA
+  services.ollama = {
+    enable = true;
+    loadModels = [
+      deepseek-r1:7b
+      deepseek-r1:8b
+      qwen2.5-coder:7b
+      qwen2.5-math:7b
+    ];
+    acceleration = "rocm";
+    rocmOverrideGfx = "10.3.0";
+    models = "/fast-storage/models";
+  };
+  services.open-webui.enable = true;
+
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+    extraSessionCommands = ''
+      export SDL_VIDEODRIVER=wayland
+      export QT_QPA_PLATFORM=wayland
+      export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+      export _JAVA_AWT_WM_NONREPARENTING=1
+      export MOZ_ENABLE_WAYLAND=1
+    ''; 
+  };
+
+  services.xserver.videoDrivers = [ "nouveau" ];
+
+  environment.sessionVariables = {
+    XCURSOR_SIZE = 96;
+    XCURSOR_THEME = "Bibata_Ghost";
+  };
   
   # BOOT
   boot = {
@@ -25,6 +71,7 @@
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
+    supportedFilesystems = [ "ntfs" ];
   };
     
   security = {
@@ -34,6 +81,7 @@
 
   # SERVICES
   services = {
+    gvfs.enable = true;
     flatpak.enable = true;
     pipewire = {
       enable = true;
@@ -46,17 +94,18 @@
       extraConfig.pipewire."92-low-latency" = {
         "context.properties" = {
           "default.clock.rate" = 48000;
-          "default.clock.quantum" = 32;
-          "default.clock.min-quantum" = 32;
-          "default.clock.max-quantum" = 32;
+          "default.clock.quantum" = 64;
+          "default.clock.min-quantum" = 64;
+          "default.clock.max-quantum" = 64;
         };
       };
     };
-    xserver = {
-      enable = true;
-      windowManager.i3.enable = true;
-    };
-    displayManager.defaultSession = "none+i3";
+    gnome.gnome-keyring.enable = true;
+    # xserver = {
+    #   enable = true;
+    #   windowManager.i3.enable = true;
+    # };
+    # displayManager.defaultSession = "none+i3";
     avahi.enable = true;
   };
 
@@ -80,7 +129,8 @@
 			(map (x: toString x) 
 				(builtins.split "\n" (builtins.readFile ./packages.txt)))))
   # Darktable version 5.0
-  ++ [pkgs-unstable.darktable]
+  ++ [ pkgs-unstable.darktable ]
+  ++ [ pkgs.nvtopPackages.amd ]
   # OBS
   ++ [(
     pkgs.wrapOBS {
@@ -101,7 +151,10 @@
   ];
   
   hardware = {
-    graphics.enable = true;
+    graphics = {
+      enable = true;
+      extraPackages = [ pkgs.rocmPackages.clr.icd ];
+    };
   };
 
   # NETWORK
@@ -126,12 +179,12 @@
     extraGroups = [ "networkmanager" "wheel" "audio" ]; 
   };
 
-  environment.variables.EDITOR = "alacritty";
+  environment.variables.EDITOR = "wezterm";
 
   # Open ports in the firewall.
   networking.firewall = {
-    allowedTCPPorts = [ 8008 8009 8010 ];
-    allowedUDPPortRanges = [ { from = 32768; to = 61000; } ];
+    allowedTCPPorts = [ 8010 ];
+    # allowedUDPPortRanges = [ { from = 32768; to = 61000; } ];
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
