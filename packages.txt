@@ -36,4 +36,3 @@ vital
 qsampler
 linuxsampler
 unar
-git-credential-manager
