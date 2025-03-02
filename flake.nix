@@ -40,5 +40,7 @@
 				modules = [ ./home.nix ];
 			};
 		};
+
+		packages.x86_64-linux.nih-plug = pkgs.callPackage ./nih-plug-flake/package.nix {};
 	};
 }

@@ -36,3 +36,5 @@ vital
 qsampler
 linuxsampler
 unar
+lsp-plugins
+metersLv2
